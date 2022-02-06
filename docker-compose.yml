@@ -16,13 +16,14 @@ services:
   rent-a-house-app:
     container_name: rent-a-house
     build:
-      #context: docker-rent-a-house
+      context: .
       dockerfile: Dockerfile
     image: rent-a-house:latest
     depends_on:
       - db
     ports:
       - 8080:8080
+    working_dir: /tena-a-house
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/rent_a_house
       - SPRING_DATASOURCE_USERNAME=postgres

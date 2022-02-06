@@ -11,3 +11,13 @@ services:
       - 15432:5432
     volumes:
       - C:/dev/data:/var/lib/postgresql
+
+  rent-a-house-app:
+    container_name: rent-a-house
+    build:
+      #context: docker-rent-a-house
+      dockerfile: Dockerfile
+    image: rent-a-house:latest
+
+    ports:
+      - 8080:8080

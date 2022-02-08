@@ -28,17 +28,29 @@ public class FlatViewingFacade implements BaseFacade<FlatViewingDTO> {
                 .collect(Collectors.toList());
     }
 
-    /*public List<FlatViewingDTO> findAllByFlatId(long flatId) {
-        return flatViewingService.findAllFlatViewingsByFlatId(flatId).stream()
-                .map(flatViewMapper::toDTO)
-                .collect(Collectors.toList());
-    }*/
-
     @Override
     public FlatViewingDTO create(FlatViewingDTO flatViewingDTO) {
 
         FlatViewingEntity flatViewingEntity = flatViewingService.create(flatViewMapper.toEntity(flatViewingDTO));
 
         return flatViewMapper.toDTO(flatViewingEntity);
+    }
+
+    @Override
+    public FlatViewingDTO getByID(long dtoId) {
+        FlatViewingEntity flatViewingEntity = flatViewingService.getById(dtoId);
+        return flatViewMapper.toDTO(flatViewingEntity);
+    }
+
+    @Override
+    public FlatViewingDTO update(long dtoId, FlatViewingDTO flatViewingDTO) {
+        FlatViewingEntity updatedFlatViewingEntity = flatViewingService.update(dtoId, flatViewMapper.toEntity(flatViewingDTO));
+
+        return flatViewMapper.toDTO(updatedFlatViewingEntity);
+    }
+
+    @Override
+    public void delete(long dtoId) {
+        flatViewingService.delete(dtoId);
     }
 }

@@ -10,4 +10,10 @@ public interface BaseFacade <DTO> {
     List<DTO> getAll();
 
     DTO create(DTO dto);
+
+    DTO getByID(long dtoId);
+
+    DTO update(long dtoId, DTO dto);
+
+    void delete(long dtoId);
 }

@@ -7,16 +7,24 @@ import org.springframework.stereotype.Service;
 @Service("flatViewingService")
 public class FlatViewingService extends AbstractService<FlatViewingEntity> {
 
-
     public FlatViewingService(BaseRepository<FlatViewingEntity> repository) {
         super(repository);
     }
 
-    /*@Override
-    public FlatViewingEntity getById(long entityId) {
-        return flatViewingRepository.findById(entityId)
-                .orElseThrow(
-                        () -> new EntityNotFoundException(String.format("Flat with Id: %s doesn't exists", entityId))
-                );
-    }*/
+    @Override
+    public FlatViewingEntity update(long entityId, FlatViewingEntity flatViewingData) {
+        FlatViewingEntity flatViewingForUpdate = getRepository().getById(entityId);
+
+        FlatViewingEntity flatViewingForSave = populate(flatViewingForUpdate, flatViewingData);
+
+        return getRepository().saveAndFlush(flatViewingForSave);
+    }
+
+    //TODO think how to generify this logic
+    private FlatViewingEntity populate(FlatViewingEntity flatViewingForUpdate, FlatViewingEntity flatViewingUpdateData) {
+        flatViewingForUpdate.setViewingDay(flatViewingUpdateData.getViewingDay());
+        flatViewingForUpdate.setShortDescription(flatViewingUpdateData.getShortDescription());
+
+        return flatViewingForUpdate;
+    }
 }

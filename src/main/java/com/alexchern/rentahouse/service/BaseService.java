@@ -9,4 +9,8 @@ public interface BaseService<ENTITY> {
     List<ENTITY> getAll();
 
     ENTITY getById(long entityId);
+
+    void delete(long entityId);
+
+    ENTITY update(long entityId, ENTITY entity);
 }

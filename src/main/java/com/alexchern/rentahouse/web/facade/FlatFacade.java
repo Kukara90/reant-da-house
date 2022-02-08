@@ -46,4 +46,22 @@ public class FlatFacade implements BaseFacade<FlatDTO> {
 
         return flatMapper.toDTO(newFlatEntity);
     }
+
+    @Override
+    public FlatDTO getByID(long dtoId) {
+        FlatEntity flatEntity = flatService.getById(dtoId);
+        return flatMapper.toDTO(flatEntity);
+    }
+
+    @Override
+    public FlatDTO update(long dtoId, FlatDTO flatDTO) {
+        FlatEntity flatEntity = flatMapper.toEntity(flatDTO);
+
+        return flatMapper.toDTO(flatService.update(dtoId, flatEntity));
+    }
+
+    @Override
+    public void delete(long dtoId) {
+        flatService.delete(dtoId);
+    }
 }

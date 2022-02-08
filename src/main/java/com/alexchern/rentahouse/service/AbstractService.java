@@ -2,13 +2,15 @@ package com.alexchern.rentahouse.service;
 
 import com.alexchern.rentahouse.domain.repository.BaseRepository;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import javax.transaction.Transactional;
 import java.util.List;
 
 @AllArgsConstructor
+@Getter
 @Transactional
-public class AbstractService<ENTITY> implements BaseService<ENTITY> {
+public abstract class AbstractService<ENTITY> implements BaseService<ENTITY> {
 
     private final BaseRepository<ENTITY> repository;
 
@@ -26,5 +28,12 @@ public class AbstractService<ENTITY> implements BaseService<ENTITY> {
     @Override
     public ENTITY getById(long entityId) {
         return repository.getById(entityId);
+    }
+
+    public abstract ENTITY update(long entityId, ENTITY entity);
+
+    @Override
+    public void delete(long entityId) {
+        repository.deleteById(entityId);
     }
 }

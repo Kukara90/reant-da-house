@@ -36,6 +36,7 @@ public class Owner {
     @NotBlank
     private String firstName;
 
+    @NotBlank
     private String lastName;
 
     @Column(name = "is_agent")

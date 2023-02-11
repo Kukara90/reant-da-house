@@ -9,6 +9,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class OwnerDto {
     private Long id;
+    private long version;
     private String firstName;
     private String lastName;
     private boolean isAgent;

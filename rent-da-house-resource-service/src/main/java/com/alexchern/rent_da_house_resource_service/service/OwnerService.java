@@ -27,13 +27,7 @@ public class OwnerService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Owner with id: %s doesn't exists", ownerId)));
     }
 
-    public Owner createOwner(String firstName, String lastName, String phoneNumber) {
-        Owner owner = Owner.builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .phoneNumber(phoneNumber)
-                .build();
-
+    public Owner createOwner(Owner owner) {
         return ownerRepository.save(owner);
     }
 }

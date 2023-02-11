@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  rent-da-house-postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rent_da_house
+    ports:
+      - 5432:5432

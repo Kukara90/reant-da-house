@@ -1,13 +1,17 @@
+server:
+  servlet:
+    context-path: /rent-da-house-api
+
 spring:
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:15432/rent_a_house
+    url: jdbc:postgresql://localhost:5432/rent_da_house
     username: postgres
     password: postgres
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+springdoc:
+  swagger-ui:
+    path: /swagger

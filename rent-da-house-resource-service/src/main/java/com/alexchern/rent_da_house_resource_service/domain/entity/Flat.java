@@ -3,6 +3,7 @@ package com.alexchern.rent_da_house_resource_service.domain.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
@@ -11,18 +12,23 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name = "flats")
-public class FlatEntity {
+public class Flat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Version
+    private long version;
+
+    @NotBlank
     private String title;
 
     private String link;
 
     private String picture;
 
+    @NotBlank
     private String address;
 
     @Column(name = "vote_value")
@@ -35,5 +41,5 @@ public class FlatEntity {
     private int costPerMonth;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private OwnerEntity owner;
+    private Owner owner;
 }

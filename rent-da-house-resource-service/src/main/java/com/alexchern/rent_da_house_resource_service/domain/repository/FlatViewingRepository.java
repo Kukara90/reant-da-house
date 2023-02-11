@@ -1,16 +1,9 @@
 package com.alexchern.rent_da_house_resource_service.domain.repository;
 
-import com.alexchern.rent_da_house_resource_service.domain.entity.FlatViewingEntity;
+import com.alexchern.rent_da_house_resource_service.domain.entity.FlatViewing;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-
 @Repository
-public interface FlatViewingRepository extends BaseRepository<FlatViewingEntity> {
-
-    @Override
-    Optional<FlatViewingEntity> findById(long flatViewingId);
-
-    Optional<List<FlatViewingEntity>> findAllByFlatId(long flatId);
+public interface FlatViewingRepository extends JpaRepository<FlatViewing, Long> {
 }

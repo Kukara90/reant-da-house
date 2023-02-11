@@ -1,34 +1,20 @@
 package com.alexchern.rent_da_house_resource_service.domain.mapper;
 
-import com.alexchern.rent_da_house_resource_service.domain.entity.FlatEntity;
-import com.alexchern.rentahouse.web.dto.FlatDTO;
-import org.springframework.stereotype.Component;
+import com.alexchern.rent_da_house_resource_service.domain.dto.FlatCreateDto;
+import com.alexchern.rent_da_house_resource_service.domain.dto.FlatDto;
+import com.alexchern.rent_da_house_resource_service.domain.entity.Flat;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class FlatMapper implements BaseMapper<FlatEntity, FlatDTO> {
+import java.util.Collection;
+import java.util.List;
 
-    @Override
-    public FlatDTO toDTO(FlatEntity flatEntity) {
-        return FlatDTO.builder()
-                .id(flatEntity.getId())
-                .title(flatEntity.getTitle())
-                .link(flatEntity.getLink())
-                .picture(flatEntity.getPicture())
-                .address(flatEntity.getAddress())
-                .costPerMonth(flatEntity.getCostPerMonth())
-                .shortDescription(flatEntity.getShortDescription())
-                .build();
-    }
+@Mapper(componentModel = "spring")
+public interface FlatMapper {
 
-    @Override
-    public FlatEntity toEntity(FlatDTO flatDTO) {
-        return FlatEntity.builder()
-                .title(flatDTO.getTitle())
-                .link(flatDTO.getLink())
-                .picture(flatDTO.getPicture())
-                .shortDescription(flatDTO.getShortDescription())
-                .address(flatDTO.getAddress())
-                .costPerMonth(flatDTO.getCostPerMonth())
-                .build();
-    }
+    FlatDto toDto(Flat flat);
+    List<FlatDto> toDtos(Collection<Flat> flatCollection);
+
+    @Mapping(target = "owner", ignore = true)
+    Flat fromCreateDto(FlatCreateDto createDto);
 }

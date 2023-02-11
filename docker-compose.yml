@@ -1,13 +1,11 @@
 version: '3.1'
 
 services:
-  db:
+  rent-da-house-postgres:
     image: postgres
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: rent_a_house
+      POSTGRES_DB: rent_da_house
     ports:
-      - 15432:5432
-    volumes:
-      - C:/dev/data:/var/lib/postgresql
+      - 5432:5432

@@ -8,16 +8,10 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 public class FlatCreateDto {
-
     private String title;
-
     private String link;
-
-    private String picture;
-
+    private String image;
     private String address;
-
     private String shortDescription;
-
     private int costPerMonth;
 }

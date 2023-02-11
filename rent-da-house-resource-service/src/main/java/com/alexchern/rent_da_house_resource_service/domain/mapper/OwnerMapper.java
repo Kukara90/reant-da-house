@@ -1,5 +1,6 @@
 package com.alexchern.rent_da_house_resource_service.domain.mapper;
 
+import com.alexchern.rent_da_house_resource_service.domain.dto.OwnerCreateDto;
 import com.alexchern.rent_da_house_resource_service.domain.dto.OwnerDto;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Owner;
 import org.mapstruct.Mapper;
@@ -12,4 +13,6 @@ public interface OwnerMapper {
 
     OwnerDto toDto(Owner owner);
     List<OwnerDto> toDtos(Collection<Owner> ownerCollection);
+
+    Owner fromCreateDto(OwnerCreateDto createDto);
 }

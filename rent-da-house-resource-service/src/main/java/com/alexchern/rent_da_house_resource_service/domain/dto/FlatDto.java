@@ -9,9 +9,10 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class FlatDto {
     private Long id;
+    private long version;
     private String title;
     private String link;
-    private String picture;
+    private String image;
     private String address;
     private int voteValue;
     private String shortDescription;

@@ -11,7 +11,8 @@ import java.time.Instant;
 @Jacksonized
 public class FlatViewingDto {
     private long id;
+    private long version;
     private String shortDescription;
     private Instant viewingDay;
-    private FlatDto flatDTO;
+    private FlatDto flat;
 }

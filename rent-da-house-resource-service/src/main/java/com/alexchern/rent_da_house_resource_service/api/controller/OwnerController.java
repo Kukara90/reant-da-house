@@ -35,11 +35,7 @@ public class OwnerController {
 
     @PostMapping
     public OwnerDto createOwner(@RequestBody OwnerCreateDto createDto) {
-        Owner owner = ownerService.createOwner(
-                createDto.getFirstName(),
-                createDto.getLastName(),
-                createDto.getPhoneNumber()
-        );
+        Owner owner = ownerService.createOwner(ownerMapper.fromCreateDto(createDto));
 
         return ownerMapper.toDto(owner);
     }

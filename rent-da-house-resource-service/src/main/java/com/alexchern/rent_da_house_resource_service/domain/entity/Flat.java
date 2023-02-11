@@ -14,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 @Table(name = "flats")
 public class Flat {
 
+    //TODO: create sequence generator
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -26,7 +27,7 @@ public class Flat {
 
     private String link;
 
-    private String picture;
+    private String image;
 
     @NotBlank
     private String address;

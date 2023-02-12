@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -28,7 +29,8 @@ import java.time.Instant;
 public class FlatViewing {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FLAT_VIEWING_SEQUENCE_GENERATOR")
+    @SequenceGenerator(name = "FLAT_VIEWING_SEQUENCE_GENERATOR", sequenceName = "S_FLAT_VIEWING_SEQUENCE")
     private Long id;
 
     @Version

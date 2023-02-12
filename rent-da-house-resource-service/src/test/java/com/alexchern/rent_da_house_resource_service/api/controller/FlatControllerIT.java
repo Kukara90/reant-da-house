@@ -158,8 +158,10 @@ public class FlatControllerIT extends IntegrationTest {
 
         // then
         assertThat(result).satisfies(flatDto -> {
-            assertThat(flatDto.getId()).isEqualTo(1L);
-            assertThat(flatDto.getVersion()).isEqualTo(1L);
+            // id of result is 3L cause of db sequence, two inserts from test above
+            // TODO: think how to reset sequence to set id for 1L
+            assertThat(flatDto.getId()).isEqualTo(3L);
+            assertThat(flatDto.getVersion()).isEqualTo(0L);
             assertThat(flatDto.getTitle()).isEqualTo(createDto.getTitle());
             assertThat(flatDto.getLink()).isEqualTo(createDto.getLink());
             assertThat(flatDto.getImage()).isEqualTo(createDto.getImage());
@@ -207,7 +209,7 @@ public class FlatControllerIT extends IntegrationTest {
         // then
         assertThat(result).satisfies(flatDto -> {
             assertThat(flatDto.getId()).isEqualTo(flat.getId());
-            assertThat(flatDto.getVersion()).isEqualTo(flat.getVersion());
+            assertThat(flatDto.getVersion()).isEqualTo(flat.getVersion() + 1L);
             assertThat(flatDto.getTitle()).isEqualTo(flat.getTitle());
             assertThat(flatDto.getAddress()).isEqualTo(flat.getAddress());
             assertThat(flatDto.getCostPerMonth()).isEqualTo(flat.getCostPerMonth());

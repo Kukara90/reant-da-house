@@ -1,6 +1,7 @@
 version: '3.1'
 
 services:
+  #TODO: add healthcheck
   rent-da-house-resource-service:
     container_name: rent-da-house-resource-service
     hostname: rent-da-house-resource-service

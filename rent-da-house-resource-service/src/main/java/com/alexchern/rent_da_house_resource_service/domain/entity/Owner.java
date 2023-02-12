@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotBlank;
@@ -27,7 +28,8 @@ import javax.validation.constraints.NotBlank;
 public class Owner {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "OWNER_SEQUENCE_GENERATOR")
+    @SequenceGenerator(name = "OWNER_SEQUENCE_GENERATOR", sequenceName = "S_OWNER_SEQUENCE")
     private Long id;
 
     @Version
@@ -46,6 +48,6 @@ public class Owner {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     private Flat flat;
 }

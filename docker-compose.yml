@@ -1,8 +1,27 @@
 version: '3.1'
 
 services:
+  rent-da-house-resource-service:
+    container_name: rent-da-house-resource-service
+    hostname: rent-da-house-resource-service
+    image: rent-da-house-resource-service:latest
+    build:
+      context: .
+    ports:
+      - 8081:8081
+    environment:
+      SERVER_PORT: 8081
+      SPRING_DATASOURCE_URL: jdbc:postgresql://rent-da-house-postgres:5432/rent_da_house
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - rent-da-house-postgres
+
   rent-da-house-postgres:
     image: postgres
+    container_name: rent-da-house-postgres
+    hostname: rent-da-house-postgres
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres

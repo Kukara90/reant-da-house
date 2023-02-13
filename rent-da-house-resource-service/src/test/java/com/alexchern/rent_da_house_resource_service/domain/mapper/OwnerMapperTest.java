@@ -37,7 +37,7 @@ public class OwnerMapperTest {
                 .firstName(TestConstants.OWNER_FIRST_NAME)
                 .lastName(TestConstants.OWNER_LAST_NAME)
                 .phoneNumber(TestConstants.OWNER_PHONE_NUMBER)
-                .isAgent(false)
+                .isAgent(true)
                 .flat(flat)
                 .build();
 
@@ -50,7 +50,7 @@ public class OwnerMapperTest {
         assertThat(result.getFirstName()).isEqualTo(owner.getFirstName());
         assertThat(result.getLastName()).isEqualTo(owner.getLastName());
         assertThat(result.getPhoneNumber()).isEqualTo(owner.getPhoneNumber());
-        assertThat(result.isAgent()).isEqualTo(owner.isAgent());
+        assertThat(result.getIsAgent()).isEqualTo(owner.getIsAgent());
 
         FlatDto resultFlat = result.getFlat();
         assertThat(resultFlat.getId()).isEqualTo(flat.getId());
@@ -82,6 +82,6 @@ public class OwnerMapperTest {
         assertThat(result.getFirstName()).isEqualTo(createDto.getFirstName());
         assertThat(result.getLastName()).isEqualTo(createDto.getLastName());
         assertThat(result.getPhoneNumber()).isEqualTo(createDto.getPhoneNumber());
-        assertThat(result.isAgent()).isEqualTo(false);
+        assertThat(result.getIsAgent()).isEqualTo(false);
     }
 }

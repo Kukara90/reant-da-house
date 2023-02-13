@@ -1,6 +1,5 @@
 package com.alexchern.rent_da_house_resource_service.service;
 
-import com.alexchern.rent_da_house_resource_service.domain.dto.FlatCreateDto;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Flat;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Owner;
 import com.alexchern.rent_da_house_resource_service.domain.repository.FlatRepository;

@@ -16,7 +16,7 @@ import java.io.File;
 @AutoConfigureMockMvc
 @ActiveProfiles("integration")
 @Testcontainers
-public class IntegrationTest implements JsonConverters {
+public abstract class IntegrationTest implements JsonConverters {
 
     static final DockerComposeContainer<?> TEST_CONTAINER;
 

@@ -65,7 +65,7 @@ public class FlatViewingMapperTest {
         assertThat(resultFlat.getImage()).isEqualTo(flat.getImage());
         assertThat(resultFlat.getAddress()).isEqualTo(flat.getAddress());
         assertThat(resultFlat.getVoteValue()).isEqualTo(flat.getVoteValue());
-        assertThat(result.getShortDescription()).isEqualTo(flat.getShortDescription());
+        assertThat(resultFlat.getShortDescription()).isEqualTo(flat.getShortDescription());
         assertThat(resultFlat.getCostPerMonth()).isEqualTo(flat.getCostPerMonth());
 
         OwnerDto resultOwner = resultFlat.getOwner();
@@ -74,6 +74,6 @@ public class FlatViewingMapperTest {
         assertThat(resultOwner.getFirstName()).isEqualTo(owner.getFirstName());
         assertThat(resultOwner.getLastName()).isEqualTo(owner.getLastName());
         assertThat(resultOwner.getPhoneNumber()).isEqualTo(owner.getPhoneNumber());
-        assertThat(resultOwner.isAgent()).isEqualTo(owner.isAgent());
+        assertThat(resultOwner.getIsAgent()).isEqualTo(owner.getIsAgent());
     }
 }

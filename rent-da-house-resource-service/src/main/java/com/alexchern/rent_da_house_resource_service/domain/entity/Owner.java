@@ -41,8 +41,9 @@ public class Owner {
     @NotBlank
     private String lastName;
 
+    @Builder.Default
     @Column(name = "is_agent")
-    private boolean isAgent;
+    private Boolean isAgent = false;
 
     @NotBlank
     @Column(name = "phone_number")

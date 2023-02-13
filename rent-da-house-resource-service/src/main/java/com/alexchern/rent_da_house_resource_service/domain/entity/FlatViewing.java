@@ -43,6 +43,6 @@ public class FlatViewing {
     @Column(name = "viewing_day")
     private Instant viewingDay;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.DETACH)
     private Flat flat;
 }

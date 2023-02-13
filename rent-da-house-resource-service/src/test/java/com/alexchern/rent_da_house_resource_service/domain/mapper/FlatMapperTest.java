@@ -61,7 +61,7 @@ public class FlatMapperTest {
         assertThat(resultOwner.getFirstName()).isEqualTo(owner.getFirstName());
         assertThat(resultOwner.getLastName()).isEqualTo(owner.getLastName());
         assertThat(resultOwner.getPhoneNumber()).isEqualTo(owner.getPhoneNumber());
-        assertThat(resultOwner.isAgent()).isEqualTo(owner.isAgent());
+        assertThat(resultOwner.getIsAgent()).isEqualTo(owner.getIsAgent());
     }
 
     @Test

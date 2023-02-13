@@ -97,7 +97,7 @@ public class FlatControllerIT extends IntegrationTest {
                 assertThat(ownerDto.getFirstName()).isEqualTo(owner.getFirstName());
                 assertThat(ownerDto.getLastName()).isEqualTo(owner.getLastName());
                 assertThat(ownerDto.getPhoneNumber()).isEqualTo(owner.getPhoneNumber());
-                assertThat(ownerDto.isAgent()).isEqualTo(owner.isAgent());
+                assertThat(ownerDto.getIsAgent()).isEqualTo(owner.getIsAgent());
             });
         });
     }
@@ -118,8 +118,7 @@ public class FlatControllerIT extends IntegrationTest {
         // when
         FlatDto result = fromJson(
                 mockMvc.perform(get(url)).andExpect(status().isOk()),
-                new TypeReference<>() {
-                }
+                FlatDto.class
         );
 
         // then

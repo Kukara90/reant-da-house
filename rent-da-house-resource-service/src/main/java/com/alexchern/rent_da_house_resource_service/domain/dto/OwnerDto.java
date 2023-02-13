@@ -12,7 +12,7 @@ public class OwnerDto {
     private long version;
     private String firstName;
     private String lastName;
-    private boolean isAgent;
+    private Boolean isAgent;
     private String phoneNumber;
     private FlatDto flat;
 }

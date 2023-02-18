@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Service
 @Transactional
@@ -29,5 +30,16 @@ public class OwnerService {
 
     public Owner createOwner(Owner owner) {
         return ownerRepository.save(owner);
+    }
+
+    public Owner editOwner(long ownerId, Consumer<Owner> modifier) {
+        Owner owner = getOwnerById(ownerId);
+        modifier.accept(owner);
+
+        return ownerRepository.save(owner);
+    }
+
+    public void deleteOwner(long ownerId) {
+        ownerRepository.deleteById(ownerId);
     }
 }

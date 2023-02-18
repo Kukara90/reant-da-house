@@ -1,7 +1,9 @@
 package com.alexchern.rent_da_house_resource_service.api.controller;
 
 import com.alexchern.rent_da_house_resource_service.IntegrationTest;
+import com.alexchern.rent_da_house_resource_service.domain.dto.FlatViewingCreateDto;
 import com.alexchern.rent_da_house_resource_service.domain.dto.FlatViewingDto;
+import com.alexchern.rent_da_house_resource_service.domain.dto.FlatViewingUpdateDto;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Flat;
 import com.alexchern.rent_da_house_resource_service.domain.entity.FlatViewing;
 import com.alexchern.rent_da_house_resource_service.domain.repository.FlatRepository;
@@ -11,13 +13,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class FlatViewingControllerIT extends IntegrationTest {
@@ -116,5 +122,104 @@ public class FlatViewingControllerIT extends IntegrationTest {
             assertThat(flatViewingDto.getShortDescription()).isEqualTo(flatViewing.getShortDescription());
             assertThat(flatViewingDto.getViewingDay()).isEqualTo(flatViewing.getViewingDay());
         });
+    }
+
+    @Test
+    void should_create_flat_viewing() throws Exception {
+        // given
+        Flat flat = flatRepository.save(
+                Flat.builder()
+                        .title(TestConstants.FLAT_TITLE)
+                        .address(TestConstants.FLAT_ADDRESS)
+                        .costPerMonth(50000)
+                        .build()
+        );
+
+        FlatViewingCreateDto createDto = FlatViewingCreateDto.builder()
+                .flatId(flat.getId())
+                .viewingDay(Instant.parse("2023-04-09T10:15:30.00Z"))
+                .shortDescription(TestConstants.FLAT_VIEWING_SHORT_DESCRIPTION)
+                .build();
+
+        String url = FLAT_VIEWINGS_URL_BUILDER.toUriString();
+
+        // when
+        FlatViewingDto result = fromJson(
+                mockMvc.perform(
+                        post(url)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(toJson(createDto))
+                ),
+                FlatViewingDto.class
+        );
+
+        // then
+        assertThat(result).satisfies(flatViewingDto -> {
+            assertThat(flatViewingDto.getId()).isPositive();
+            assertThat(flatViewingDto.getVersion()).isEqualTo(0L);
+            assertThat(flatViewingDto.getShortDescription()).isEqualTo(createDto.getShortDescription());
+            assertThat(flatViewingDto.getViewingDay()).isEqualTo(createDto.getViewingDay());
+
+            assertThat(flatViewingDto.getFlat()).satisfies(flatDto -> {
+                assertThat(flatDto.getId()).isEqualTo(flat.getId());
+                assertThat(flatDto.getVersion()).isEqualTo(flat.getVersion());
+                assertThat(flatDto.getTitle()).isEqualTo(flat.getTitle());
+                assertThat(flatDto.getCostPerMonth()).isEqualTo(flat.getCostPerMonth());
+            });
+        });
+    }
+
+    @Test
+    void should_edit_flat_viewing() throws Exception {
+        // given
+        FlatViewing flatViewing = flatViewingRepository.save(
+                FlatViewing.builder()
+                        .shortDescription(TestConstants.FLAT_VIEWING_SHORT_DESCRIPTION)
+                        .viewingDay(Instant.parse("2022-04-09T10:15:30.00Z"))
+                        .build()
+        );
+
+        FlatViewingUpdateDto updateDto = FlatViewingUpdateDto.builder()
+                .shortDescription("NEW")
+                .build();
+
+        String url = FLAT_VIEWING_URL_BUILDER.buildAndExpand(flatViewing.getId()).toUriString();
+
+        // when
+        FlatViewingDto result = fromJson(
+                mockMvc.perform(
+                        patch(url)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(toJson(updateDto))
+                ),
+                FlatViewingDto.class
+        );
+
+        // then
+        assertThat(result).satisfies(flatViewingDto -> {
+            assertThat(flatViewingDto.getId()).isEqualTo(flatViewing.getId());
+            assertThat(flatViewingDto.getVersion()).isEqualTo(flatViewing.getVersion() + 1L);
+            assertThat(flatViewingDto.getShortDescription()).isEqualTo(updateDto.getShortDescription());
+            assertThat(flatViewingDto.getViewingDay()).isEqualTo(flatViewing.getViewingDay());
+        });
+    }
+
+    @Test
+    void should_delete_flat_viewing() throws Exception {
+        // given
+        FlatViewing flatViewing = flatViewingRepository.save(
+                FlatViewing.builder()
+                        .shortDescription(TestConstants.FLAT_VIEWING_SHORT_DESCRIPTION)
+                        .viewingDay(Instant.parse("2022-04-09T10:15:30.00Z"))
+                        .build()
+        );
+
+        String url = FLAT_VIEWING_URL_BUILDER.buildAndExpand(flatViewing.getId()).toUriString();
+
+        // when
+        mockMvc.perform(delete(url)).andExpect(status().isOk());
+
+        // then
+        assertThat(flatViewingRepository.findAll()).isEmpty();
     }
 }

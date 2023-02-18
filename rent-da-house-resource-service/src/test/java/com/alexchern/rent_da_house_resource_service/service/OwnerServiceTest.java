@@ -3,11 +3,11 @@ package com.alexchern.rent_da_house_resource_service.service;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Owner;
 import com.alexchern.rent_da_house_resource_service.domain.repository.OwnerRepository;
 import com.alexchern.rent_da_house_resource_service.utils.TestConstants;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.TransactionSystemException;
@@ -15,6 +15,7 @@ import org.springframework.transaction.TransactionSystemException;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -31,12 +32,11 @@ public class OwnerServiceTest {
     @Mock
     OwnerRepository ownerRepository;
 
-    private OwnerService ownerService;
+    @Captor
+    private ArgumentCaptor<Owner> ownerCaptor;
 
-    @BeforeEach
-    public void setUp() {
-        ownerService = new OwnerService(ownerRepository);
-    }
+    @InjectMocks
+    private OwnerService ownerService;
 
     @Test
     void should_get_all_owners() {
@@ -114,6 +114,35 @@ public class OwnerServiceTest {
                 .isInstanceOf(TransactionSystemException.class);
 
         verify(ownerRepository).save(any(Owner.class));
+        verifyNoMoreInteractions(ownerRepository);
+    }
+
+    @Test
+    void should_edit_owner() {
+        // given
+        Owner initialOwner = Owner.builder().id(TEST_ID).firstName("NEW").build();
+        Consumer<Owner> ownerConsumer = owner -> owner.setFirstName("NEW");
+
+        doReturn(Optional.of(initialOwner)).when(ownerRepository).findById(TEST_ID);
+
+        // when
+        ownerService.editOwner(TEST_ID, ownerConsumer);
+
+        // then
+        verify(ownerRepository).findById(TEST_ID);
+        verify(ownerRepository).save(ownerCaptor.capture());
+        verifyNoMoreInteractions(ownerRepository);
+
+        assertThat(ownerCaptor.getValue().getFirstName()).isEqualTo("NEW");
+    }
+
+    @Test
+    void should_delete_owner() {
+        // when
+        ownerService.deleteOwner(TEST_ID);
+
+        // then
+        verify(ownerRepository).deleteById(TEST_ID);
         verifyNoMoreInteractions(ownerRepository);
     }
 }

@@ -2,6 +2,7 @@ package com.alexchern.rent_da_house_resource_service.domain.mapper;
 
 import com.alexchern.rent_da_house_resource_service.domain.dto.FlatCreateDto;
 import com.alexchern.rent_da_house_resource_service.domain.dto.FlatDto;
+import com.alexchern.rent_da_house_resource_service.domain.dto.FlatUpdateDto;
 import com.alexchern.rent_da_house_resource_service.domain.dto.OwnerDto;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Flat;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Owner;
@@ -89,5 +90,47 @@ public class FlatMapperTest {
         assertThat(result.getVoteValue()).isEqualTo(0);
         assertThat(result.getShortDescription()).isEqualTo(createDto.getShortDescription());
         assertThat(result.getCostPerMonth()).isEqualTo(createDto.getCostPerMonth());
+    }
+
+    @Test
+    void should_merge_flat() {
+        // given
+        Flat flat = Flat.builder()
+                .id(TEST_ID)
+                .version(0L)
+                .title(TestConstants.FLAT_TITLE)
+                .link(TestConstants.FLAT_LINK)
+                .image(TestConstants.FLAT_IMAGE)
+                .address(TestConstants.FLAT_ADDRESS)
+                .voteValue(0)
+                .shortDescription(TestConstants.FLAT_SHORT_DESCRIPTION)
+                .costPerMonth(50000)
+                .build();
+
+        FlatUpdateDto updateDto = FlatUpdateDto.builder()
+                .title("FLAT_NEW_TITLE")
+                .link("FLAT_NEW_LINK")
+                .image("FLAT_NEW_IMAGE")
+                .address("FLAT_NEW_ADDRESS")
+                .voteValue(3)
+                .shortDescription("FLAT_NEW_SHORT_DESCRIPTION")
+                .costPerMonth(200)
+                .build();
+
+        // when
+        Flat result = flatMapper.mergeFlat(updateDto, flat);
+
+        // then
+        assertThat(result.getId()).isEqualTo(flat.getId());
+        assertThat(result.getVersion()).isEqualTo(flat.getVersion());
+        assertThat(result.getTitle()).isEqualTo(updateDto.getTitle());
+        assertThat(result.getLink()).isEqualTo(updateDto.getLink());
+        assertThat(result.getImage()).isEqualTo(updateDto.getImage());
+        assertThat(result.getAddress()).isEqualTo(updateDto.getAddress());
+        assertThat(result.getVoteValue()).isEqualTo(updateDto.getVoteValue());
+        assertThat(result.getShortDescription()).isEqualTo(updateDto.getShortDescription());
+        assertThat(result.getCostPerMonth()).isEqualTo(updateDto.getCostPerMonth());
+
+        assertThat(result.getOwner()).isNull();
     }
 }

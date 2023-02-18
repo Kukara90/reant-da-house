@@ -3,6 +3,7 @@ package com.alexchern.rent_da_house_resource_service.api.controller;
 import com.alexchern.rent_da_house_resource_service.IntegrationTest;
 import com.alexchern.rent_da_house_resource_service.domain.dto.OwnerCreateDto;
 import com.alexchern.rent_da_house_resource_service.domain.dto.OwnerDto;
+import com.alexchern.rent_da_house_resource_service.domain.dto.OwnerUpdateDto;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Flat;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Owner;
 import com.alexchern.rent_da_house_resource_service.domain.repository.FlatRepository;
@@ -18,7 +19,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,8 +30,6 @@ public class OwnerControllerIT extends IntegrationTest {
             UriComponentsBuilder.fromPath("/owners");
     private static final UriComponentsBuilder OWNER_URL_BUILDER =
             OWNERS_URL_BUILDER.cloneBuilder().pathSegment("{ownerId}");
-    private static final UriComponentsBuilder OWNER_CREATE_URL_BUILDER =
-            OWNERS_URL_BUILDER.cloneBuilder();
 
     @Autowired
     private OwnerRepository ownerRepository;
@@ -140,7 +141,7 @@ public class OwnerControllerIT extends IntegrationTest {
                 .phoneNumber(TestConstants.OWNER_PHONE_NUMBER)
                 .build();
 
-        String url = OWNER_CREATE_URL_BUILDER.buildAndExpand().toUriString();
+        String url = OWNERS_URL_BUILDER.buildAndExpand().toUriString();
 
         // when
         OwnerDto result = fromJson(
@@ -156,12 +157,72 @@ public class OwnerControllerIT extends IntegrationTest {
         assertThat(result).satisfies(ownerDto -> {
             // id of result is 3L cause of db sequence, two inserts from test above
             // TODO: think how to reset sequence to set id for 1L
-            assertThat(ownerDto.getId()).isEqualTo(3L);
+            assertThat(ownerDto.getId()).isPositive();
             assertThat(ownerDto.getVersion()).isEqualTo(0L);
             assertThat(ownerDto.getFirstName()).isEqualTo(createDto.getFirstName());
             assertThat(ownerDto.getLastName()).isEqualTo(createDto.getLastName());
             assertThat(ownerDto.getPhoneNumber()).isEqualTo(createDto.getPhoneNumber());
             assertThat(ownerDto.getIsAgent()).isEqualTo(false);
         });
+    }
+
+    @Test
+    void should_edit_owner() throws Exception {
+        // given
+        Owner owner = ownerRepository.save(
+                Owner.builder()
+                        .firstName(TestConstants.OWNER_FIRST_NAME)
+                        .lastName(TestConstants.OWNER_LAST_NAME)
+                        .phoneNumber(TestConstants.OWNER_PHONE_NUMBER)
+                        .isAgent(true)
+                        .build()
+        );
+
+        OwnerUpdateDto updateDto = OwnerUpdateDto.builder()
+                .phoneNumber("NEW")
+                .build();
+
+        String url = OWNER_URL_BUILDER.buildAndExpand(owner.getId()).toUriString();
+
+        // when
+        OwnerDto result = fromJson(
+                mockMvc.perform(
+                        patch(url)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(toJson(updateDto))
+                ),
+                OwnerDto.class
+        );
+
+        // then
+        assertThat(result).satisfies(ownerDto -> {
+            assertThat(ownerDto.getId()).isEqualTo(owner.getId());
+            assertThat(ownerDto.getVersion()).isEqualTo(owner.getVersion() + 1L);
+            assertThat(ownerDto.getFirstName()).isEqualTo(owner.getFirstName());
+            assertThat(ownerDto.getLastName()).isEqualTo(owner.getLastName());
+            assertThat(ownerDto.getPhoneNumber()).isEqualTo(updateDto.getPhoneNumber());
+            assertThat(ownerDto.getIsAgent()).isEqualTo(owner.getIsAgent());
+        });
+    }
+
+    @Test
+    void should_delete_owner() throws Exception {
+        // given
+        Owner owner = ownerRepository.save(
+                Owner.builder()
+                        .firstName(TestConstants.OWNER_FIRST_NAME)
+                        .lastName(TestConstants.OWNER_LAST_NAME)
+                        .phoneNumber(TestConstants.OWNER_PHONE_NUMBER)
+                        .isAgent(true)
+                        .build()
+        );
+
+        String url = OWNER_URL_BUILDER.buildAndExpand(owner.getId()).toUriString();
+
+        // when
+        mockMvc.perform(delete(url)).andExpect(status().isOk());
+
+        // then
+        assertThat(ownerRepository.findAll()).isEmpty();
     }
 }

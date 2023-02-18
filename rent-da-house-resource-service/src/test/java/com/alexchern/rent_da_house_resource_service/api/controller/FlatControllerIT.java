@@ -3,6 +3,7 @@ package com.alexchern.rent_da_house_resource_service.api.controller;
 import com.alexchern.rent_da_house_resource_service.IntegrationTest;
 import com.alexchern.rent_da_house_resource_service.domain.dto.FlatCreateDto;
 import com.alexchern.rent_da_house_resource_service.domain.dto.FlatDto;
+import com.alexchern.rent_da_house_resource_service.domain.dto.FlatUpdateDto;
 import com.alexchern.rent_da_house_resource_service.domain.dto.OwnerAssignDto;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Flat;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Owner;
@@ -19,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -29,8 +31,6 @@ public class FlatControllerIT extends IntegrationTest {
             UriComponentsBuilder.fromPath("/flats");
     private static final UriComponentsBuilder FLAT_URL_BUILDER =
             FLATS_URL_BUILDER.cloneBuilder().pathSegment("{flatId}");
-    private static final UriComponentsBuilder FLAT_CREATE_URL_BUILDER =
-            FLATS_URL_BUILDER.cloneBuilder();
     private static final UriComponentsBuilder FLAT_ASSIGN_OWNER_URL_BUILDER =
             FLAT_URL_BUILDER.cloneBuilder().path("/owner");
 
@@ -143,7 +143,7 @@ public class FlatControllerIT extends IntegrationTest {
                 .costPerMonth(50000)
                 .build();
 
-        String url = FLAT_CREATE_URL_BUILDER.buildAndExpand().toUriString();
+        String url = FLATS_URL_BUILDER.buildAndExpand().toUriString();
 
         // when
         FlatDto result = fromJson(
@@ -159,7 +159,7 @@ public class FlatControllerIT extends IntegrationTest {
         assertThat(result).satisfies(flatDto -> {
             // id of result is 3L cause of db sequence, two inserts from test above
             // TODO: think how to reset sequence to set id for 1L
-            assertThat(flatDto.getId()).isEqualTo(3L);
+            assertThat(flatDto.getId()).isPositive();
             assertThat(flatDto.getVersion()).isEqualTo(0L);
             assertThat(flatDto.getTitle()).isEqualTo(createDto.getTitle());
             assertThat(flatDto.getLink()).isEqualTo(createDto.getLink());
@@ -221,5 +221,65 @@ public class FlatControllerIT extends IntegrationTest {
                 assertThat(ownerDto.getPhoneNumber()).isEqualTo(owner.getPhoneNumber());
             });
         });
+    }
+
+    @Test
+    void should_edit_flat() throws Exception {
+        // given
+        Flat flat = flatRepository.save(
+                Flat.builder()
+                        .title(TestConstants.FLAT_TITLE)
+                        .address(TestConstants.FLAT_ADDRESS)
+                        .costPerMonth(50000)
+                        .build()
+        );
+
+        FlatUpdateDto updateDto = FlatUpdateDto.builder()
+                .title("FLAT_NEW_TITLE")
+                .costPerMonth(200)
+                .build();
+
+        String url = FLAT_URL_BUILDER.buildAndExpand(flat.getId()).toUriString();
+
+        // when
+        FlatDto result = fromJson(
+                mockMvc.perform(
+                        patch(url)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(toJson(updateDto))
+                ),
+                FlatDto.class
+        );
+
+        // then
+        assertThat(result).satisfies(flatDto -> {
+            assertThat(flatDto.getId()).isEqualTo(flat.getId());
+            assertThat(flatDto.getVersion()).isEqualTo(flat.getVersion() + 1L);
+            assertThat(flatDto.getTitle()).isEqualTo(updateDto.getTitle());
+            assertThat(flatDto.getAddress()).isEqualTo(flat.getAddress());
+            assertThat(flatDto.getCostPerMonth()).isEqualTo(updateDto.getCostPerMonth());
+
+            assertThat(flatDto.getOwner()).isNull();
+        });
+    }
+
+    @Test
+    void should_delete_flat() throws Exception {
+        // given
+        Flat flat = flatRepository.save(
+                Flat.builder()
+                        .title(TestConstants.FLAT_TITLE)
+                        .address(TestConstants.FLAT_ADDRESS)
+                        .costPerMonth(50000)
+                        .build()
+        );
+
+        String url = FLAT_URL_BUILDER.buildAndExpand(flat.getId()).toUriString();
+
+        // when
+        mockMvc.perform(delete(url)).andExpect(status().isOk());
+
+        // then
+        assertThat(flatRepository.findAll()).isEmpty();
     }
 }

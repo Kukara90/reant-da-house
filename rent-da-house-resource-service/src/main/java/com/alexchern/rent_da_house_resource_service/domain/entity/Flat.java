@@ -17,6 +17,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 @Getter
 @Setter
@@ -36,6 +38,7 @@ public class Flat {
     private long version;
 
     @NotBlank
+    @Column(nullable = false)
     private String title;
 
     private String link;
@@ -43,15 +46,18 @@ public class Flat {
     private String image;
 
     @NotBlank
+    @Column(nullable = false)
     private String address;
 
+    @PositiveOrZero
     @Column(name = "vote_value")
     private int voteValue;
 
     @Column(name = "short_description")
     private String shortDescription;
 
-    @Column(name = "cost_per_month")
+    @Positive
+    @Column(name = "cost_per_month", nullable = false)
     private int costPerMonth;
 
     @OneToOne(cascade = CascadeType.MERGE)

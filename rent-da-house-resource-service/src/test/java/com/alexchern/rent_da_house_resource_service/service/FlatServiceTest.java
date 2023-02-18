@@ -4,11 +4,11 @@ import com.alexchern.rent_da_house_resource_service.domain.entity.Flat;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Owner;
 import com.alexchern.rent_da_house_resource_service.domain.repository.FlatRepository;
 import com.alexchern.rent_da_house_resource_service.utils.TestConstants;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.TransactionSystemException;
@@ -16,6 +16,7 @@ import org.springframework.transaction.TransactionSystemException;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,12 +40,8 @@ public class FlatServiceTest {
     @Captor
     ArgumentCaptor<Flat> flatCaptor;
 
+    @InjectMocks
     private FlatService flatService;
-
-    @BeforeEach
-    public void setUp() {
-        flatService = new FlatService(flatRepository, ownerService);
-    }
 
     @Test
     void should_get_all_flats() {
@@ -150,5 +147,36 @@ public class FlatServiceTest {
 
         Flat result = flatCaptor.getValue();
         assertThat(result.getOwner().getId()).isEqualTo(owner.getId());
+    }
+
+    @Test
+    void should_edit_flat() {
+        // given
+        Flat initialFlat = Flat.builder().id(TEST_ID).voteValue(2).build();
+        Consumer<Flat> flatConsumer = flat -> flat.setVoteValue(5);
+
+        doReturn(Optional.of(initialFlat)).when(flatRepository).findById(TEST_ID);
+
+        // when
+        flatService.editFlat(TEST_ID, flatConsumer);
+
+        // then
+        verify(flatRepository).findById(TEST_ID);
+        verify(flatRepository).save(flatCaptor.capture());
+        verifyNoMoreInteractions(flatRepository);
+        verifyNoInteractions(ownerService);
+
+        assertThat(flatCaptor.getValue().getVoteValue()).isEqualTo(5);
+    }
+
+    @Test
+    void should_delete_flat() {
+        // when
+        flatService.deleteFlat(TEST_ID);
+
+        // then
+        verify(flatRepository).deleteById(TEST_ID);
+        verifyNoMoreInteractions(flatRepository);
+        verifyNoInteractions(ownerService);
     }
 }

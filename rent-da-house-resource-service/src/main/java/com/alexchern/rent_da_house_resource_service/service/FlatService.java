@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Service
 @Transactional
@@ -39,5 +40,16 @@ public class FlatService {
 
         flat.setOwner(owner);
         return flatRepository.save(flat);
+    }
+
+    public Flat editFlat(long flatId, Consumer<Flat> modifier) {
+        Flat flat = getFlatById(flatId);
+        modifier.accept(flat);
+
+        return flatRepository.save(flat);
+    }
+
+    public void deleteFlat(long flatId) {
+        flatRepository.deleteById(flatId);
     }
 }

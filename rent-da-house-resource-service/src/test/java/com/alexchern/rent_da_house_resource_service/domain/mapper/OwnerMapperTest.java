@@ -3,6 +3,7 @@ package com.alexchern.rent_da_house_resource_service.domain.mapper;
 import com.alexchern.rent_da_house_resource_service.domain.dto.FlatDto;
 import com.alexchern.rent_da_house_resource_service.domain.dto.OwnerCreateDto;
 import com.alexchern.rent_da_house_resource_service.domain.dto.OwnerDto;
+import com.alexchern.rent_da_house_resource_service.domain.dto.OwnerUpdateDto;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Flat;
 import com.alexchern.rent_da_house_resource_service.domain.entity.Owner;
 import com.alexchern.rent_da_house_resource_service.utils.TestConstants;
@@ -83,5 +84,36 @@ public class OwnerMapperTest {
         assertThat(result.getLastName()).isEqualTo(createDto.getLastName());
         assertThat(result.getPhoneNumber()).isEqualTo(createDto.getPhoneNumber());
         assertThat(result.getIsAgent()).isEqualTo(false);
+    }
+
+    @Test
+    void should_merge_owner() {
+        // given
+        Owner owner = Owner.builder()
+                .id(TEST_ID)
+                .version(0L)
+                .firstName(TestConstants.OWNER_FIRST_NAME)
+                .lastName(TestConstants.OWNER_LAST_NAME)
+                .phoneNumber(TestConstants.OWNER_PHONE_NUMBER)
+                .isAgent(false)
+                .build();
+
+        OwnerUpdateDto updateDto = OwnerUpdateDto.builder()
+                .firstName("OWNER_NEW_FIRST_NAME")
+                .lastName("OWNER_NEW_LAST_NAME")
+                .phoneNumber("OWNER_NEW_PHONE_NUMBER")
+                .isAgent(true)
+                .build();
+
+        // when
+        Owner result = ownerMapper.mergeOwner(updateDto, owner);
+
+        // then
+        assertThat(result.getId()).isEqualTo(owner.getId());
+        assertThat(result.getVersion()).isEqualTo(owner.getVersion());
+        assertThat(result.getFirstName()).isEqualTo(updateDto.getFirstName());
+        assertThat(result.getLastName()).isEqualTo(updateDto.getLastName());
+        assertThat(result.getPhoneNumber()).isEqualTo(updateDto.getPhoneNumber());
+        assertThat(result.getIsAgent()).isEqualTo(true);
     }
 }

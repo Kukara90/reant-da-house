@@ -4,9 +4,11 @@ services:
   #TODO: add healthcheck
   rent-da-house-resource-service:
     container_name: rent-da-house-resource-service
-    hostname: rent-da-house-resource-service
-    image: rent-da-house-resource-service:latest
+    hostname: rdh-app-backend
+    image: rdh-app-backend:latest
     build:
+      extra_hosts:
+        - rdh-app-backend
       context: .
     ports:
       - 8081:8081

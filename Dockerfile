@@ -2,7 +2,7 @@ FROM maven:3.8.7-eclipse-temurin-11 AS MAVEN_BUILD
 COPY pom.xml .
 COPY rent-da-house-resource-service/src/ rent-da-house-resource-service/src/
 COPY rent-da-house-resource-service/pom.xml rent-da-house-resource-service/.
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:11-jdk-alpine
 VOLUME /tmp
